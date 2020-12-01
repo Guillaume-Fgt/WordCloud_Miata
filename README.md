@@ -9,5 +9,6 @@ line 13, edit txt file name with the appropriate one
 line 16, change the generation name accordingly
 
 result of the script:
-
+![Alt text](figure_test.png "Title")
 example of what you can achieve at the end (using gimp)
+![Alt text](bitmap_1.png "Title")
