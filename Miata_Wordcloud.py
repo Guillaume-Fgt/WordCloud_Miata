@@ -1,233 +1,52 @@
-import os
-from os import path
-
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from wordcloud import STOPWORDS, WordCloud
 
-# get data directory (using getcwd() is needed to support running example in generated IPython notebook)
-d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 
-# Read the whole text.
-text = open(path.join(d, "Mazda Miata Documentaries NB EP3 Slow Evolution.txt")).read()
+def read_sub_file(path: str) -> str:
+    with open(path) as subtitle:
+        text = subtitle.read()
+    return text
 
-# read the mask image
-mask = np.array(Image.open(path.join(d, "NB.png")))
 
-# Create stopword list:
-stop_words = set(STOPWORDS)
-stop_words.update(
-    [
-        "really",
-        "know",
-        "car",
-        "cars",
-        "thing",
-        "things",
-        "actually",
-        "one",
-        "probably",
-        "now",
-        "well",
-        "back",
-        "think",
-        "way",
-        "bob",
-        "front",
-        "never",
-        "gonna",
-        "mean",
-        "year",
-        "years",
-        "got",
-        "part",
-        "guy",
-        "little",
-        "three",
-        "said",
-        "wait",
-        "made",
-        "make",
-        "Mark",
-        "four",
-        "today",
-        "music",
-        "time",
-        "day",
-        "end",
-        "go",
-        "behind",
-        "take",
-        "kind",
-        "lot",
-        "around",
-        "see",
-        "getting",
-        "trying",
-        "sort",
-        "people",
-        "start",
-        "put",
-        "talk",
-        "look",
-        "first",
-        "going",
-        "say",
-        "all",
-        "wanted",
-        "knew",
-        "much",
-        "chrysler",
-        "making",
-        "took",
-        "five",
-        "door",
-        "handle",
-        "use",
-        "wheel",
-        "lamp",
-        "still",
-        "bit",
-        "guys",
-        "bushing",
-        "need",
-        "every",
-        "us",
-        "everything",
-        "side",
-        "built",
-        "right",
-        "good",
-        "mazda",
-        "bushings",
-        "parts",
-        "try",
-        "feel",
-        "miata",
-        "different",
-        "fact",
-        "whole",
-        "generation",
-        "better",
-        "point",
-        "na",
-        "nb",
-        "nc",
-        "nd",
-        "fourth",
-        "anything",
-        "two",
-        "designed",
-        "due",
-        "went",
-        "done",
-        "needed",
-        "let",
-        "second",
-        "stuff",
-        "change",
-        "engine",
-        "feels",
-        "long",
-        "makes",
-        "work",
-        "give",
-        "always",
-        "become",
-        "want",
-        "yeah",
-        "find",
-        "something",
-        "believe",
-        "overall",
-        "vehicle",
-        "transmission",
-        "another",
-        "example",
-        "exactly",
-        "sent",
-        "best",
-        "type",
-        "compared",
-        "together",
-        "feeling",
-        "turn",
-        "mx",
-        "drive",
-        "standpoint",
-        "convertible",
-        "gets",
-        "coming",
-        "level",
-        "reason",
-        "rear",
-        "sound",
-        "gear",
-        "show",
-        "magazine",
-        "clay",
-        "sports",
-        "motor",
-        "suspension",
-        "subframe",
-        "indy",
-        "speed",
-        "liter",
-        "big",
-        "underneath",
-        "old",
-        "period",
-        "ended",
-        "tube",
-        "thought",
-        "started",
-        "pretty",
-        "easier",
-        "initial",
-        "company",
-        "new",
-        "finally",
-        "even",
-        "across",
-        "customer",
-        "designer",
-        "huge",
-        "biggest",
-        "place",
-        "bump",
-        "platform",
-        "5",
-        "000",
-        "japanese",
-        "design",
-        "afford",
-        "shift",
-        "project",
-        "fortunate",
-        "home",
-        "looking",
-        "joined",
-    ]
-)
+def read_mask_image(path: str) -> np.ndarray:
+    with Image.open(path) as image:
+        mask = np.array(image)
+    return mask
 
-# Generate a word cloud image
-wordcloud = WordCloud(
-    stopwords=stop_words,
-    max_words=200,
-    background_color=None,
-    mode="RGBA",
-    color_func=lambda *args, **kwargs: (0, 0, 0),
-    mask=mask,
-    include_numbers=True,
-).generate(text)
 
-# Display the generated image:
-# the matplotlib way:
+def generate_stopwords_set(path: str) -> set:
+    with open(path) as file:
+        stop_words = STOPWORDS
+        stop_words.update(file.read().splitlines())
+    return stop_words
 
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.savefig(
-    path.join(d, "figure_test.png"), transparent=True, dpi=300
-)  # savefig before plt.show (bug with blank file saved otherwise)
-plt.show()
+
+def main() -> None:
+    text = read_sub_file(
+        "subtitle_files/Mazda Miata Documentaries NB EP3 Slow Evolution.txt"
+    )
+
+    mask = read_mask_image("mask_images/NB.png")
+
+    stop_words = generate_stopwords_set("stop_words.txt")
+
+    # Generate a word cloud image
+    wordcloud = WordCloud(
+        stopwords=stop_words,
+        max_words=200,
+        background_color=None,
+        mode="RGBA",
+        color_func=lambda *args, **kwargs: (0, 0, 0),
+        mask=mask,
+        include_numbers=True,
+    ).generate(text)
+
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.savefig("figure_test.png", transparent=True, dpi=300)
+
+
+if __name__ == "__main__":
+    main()
