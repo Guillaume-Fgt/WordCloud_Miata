@@ -3,6 +3,10 @@ import numpy as np
 from PIL import Image
 from wordcloud import STOPWORDS, WordCloud
 
+SUB_FILE_PATH = "subtitle_files/Mazda Miata Documentaries NB EP3 Slow Evolution.txt"
+MASK_IMAGE_PATH = "mask_images/NB.png"
+STOP_WORDS_PATH = "stop_words.txt"
+
 
 def read_sub_file(path: str) -> str:
     with open(path) as subtitle:
@@ -24,13 +28,11 @@ def generate_stopwords_set(path: str) -> set:
 
 
 def main() -> None:
-    text = read_sub_file(
-        "subtitle_files/Mazda Miata Documentaries NB EP3 Slow Evolution.txt"
-    )
+    text = read_sub_file(SUB_FILE_PATH)
 
-    mask = read_mask_image("mask_images/NB.png")
+    mask = read_mask_image(MASK_IMAGE_PATH)
 
-    stop_words = generate_stopwords_set("stop_words.txt")
+    stop_words = generate_stopwords_set(STOP_WORDS_PATH)
 
     # Generate a word cloud image
     wordcloud = WordCloud(
